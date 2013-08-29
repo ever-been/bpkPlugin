@@ -1,5 +1,6 @@
 package cz.cuni.mff.d3s.been.bpkplugin;
 
+import org.apache.maven.BuildFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -15,7 +16,7 @@ class GeneratorDriver {
 		this.log = log;
 	}
 
-	public void generate(String runtimeTypeName, Configuration configuration) throws ConfigurationException, GeneratorException {
+	public void generate(String runtimeTypeName, Configuration configuration) throws ConfigurationException, GeneratorException, BuildFailureException {
 		selectCorrectGenerator(runtimeTypeName).generate(configuration);
 	}
 

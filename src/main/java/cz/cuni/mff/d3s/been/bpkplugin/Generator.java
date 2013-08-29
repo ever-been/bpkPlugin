@@ -1,5 +1,7 @@
 package cz.cuni.mff.d3s.been.bpkplugin;
 
+import org.apache.maven.BuildFailureException;
+
 /**
  * 
  * BPK Generator. See abstract implementation {@link Generator} and real
@@ -22,6 +24,6 @@ public interface Generator {
 	 *           when configuration is wrong (Illegal dependencies between
 	 *           parameters, Missing parameters, etc.)
 	 */
-	void generate(Configuration configuration) throws GeneratorException, ConfigurationException;
+	void generate(Configuration configuration) throws GeneratorException, ConfigurationException, BuildFailureException;
 
 }

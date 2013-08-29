@@ -2,18 +2,26 @@ package cz.cuni.mff.d3s.been.bpkplugin;
 
 import static cz.cuni.mff.d3s.been.bpk.BpkNames.*;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
 import cz.cuni.mff.d3s.been.bpk.*;
+import cz.cuni.mff.d3s.been.core.jaxb.BindingParser;
+import cz.cuni.mff.d3s.been.core.jaxb.ConvertorException;
+import cz.cuni.mff.d3s.been.core.jaxb.XSD;
+import cz.cuni.mff.d3s.been.core.task.TaskContextDescriptor;
+import cz.cuni.mff.d3s.been.core.task.TaskDescriptor;
 import cz.cuni.mff.d3s.been.util.FileToArchive;
 import cz.cuni.mff.d3s.been.util.ItemToArchive;
 import cz.cuni.mff.d3s.been.util.StringToArchive;
 import cz.cuni.mff.d3s.been.util.ZipUtil;
+import org.apache.maven.BuildFailureException;
 import org.apache.maven.plugin.logging.Log;
+import org.xml.sax.SAXException;
+
+import javax.xml.bind.JAXBException;
 
 /**
  * 
@@ -35,7 +43,7 @@ public abstract class GeneratorImpl implements Generator {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void generate(Configuration configuration) throws GeneratorException, ConfigurationException {
+	public void generate(Configuration configuration) throws GeneratorException, ConfigurationException, BuildFailureException {
 		validate(configuration);
 		exportBpk(configuration);
 	}
@@ -66,7 +74,7 @@ public abstract class GeneratorImpl implements Generator {
 	 * @throws GeneratorException
 	 *           when some exception occures while generating BPK
 	 */
-	private void exportBpk(Configuration configuration) throws GeneratorException {
+	private void exportBpk(Configuration configuration) throws GeneratorException, BuildFailureException {
 		BpkConfiguration bpkCfg = generateBpkConfiguration(configuration);
 
 		Collection<ItemToArchive> items = getItemsForArchivation(configuration);
@@ -93,19 +101,46 @@ public abstract class GeneratorImpl implements Generator {
         }
     }
 
-	private List<ItemToArchive> getTaskDescriptorTemplates(Configuration configuration) {
-		return getDescriptorTemplates(configuration.taskDescriptors, TASK_DESCRIPTORS_DIR);
+	private List<ItemToArchive> getTaskDescriptorTemplates(Configuration configuration) throws BuildFailureException {
+        BindingParser<TaskDescriptor> parser;
+        try {
+            parser = XSD.TASK_DESCRIPTOR.createParser(TaskDescriptor.class);
+        } catch (SAXException | JAXBException e) {
+            // build failed
+            throw new BuildFailureException(String.format("Unable to create JAXB parser for %s", TaskDescriptor.class), e);
+        }
+		return getDescriptorTemplates(configuration.taskDescriptors, TASK_DESCRIPTORS_DIR, parser);
 	}
 
-	private List<ItemToArchive> getTaskContextDescriptorTemplates(Configuration configuration) {
-		return getDescriptorTemplates(configuration.taskContextDescriptors, TASK_CONTEXT_DESCRIPTORS_DIR);
+	private List<ItemToArchive> getTaskContextDescriptorTemplates(Configuration configuration) throws BuildFailureException {
+        BindingParser<TaskContextDescriptor> parser;
+        try {
+            parser = XSD.TASK_CONTEXT_DESCRIPTOR.createParser(TaskContextDescriptor.class);
+        } catch (SAXException | JAXBException e) {
+            // build failed
+            throw new BuildFailureException(String.format("Unable to create JAXB parser for %s", TaskContextDescriptor.class), e);
+        }
+		return getDescriptorTemplates(configuration.taskContextDescriptors, TASK_CONTEXT_DESCRIPTORS_DIR, parser);
 	}
 
-	private List<ItemToArchive> getDescriptorTemplates(File[] descriptors, String dirNameInZip) {
+	private List<ItemToArchive> getDescriptorTemplates(File[] descriptors, String dirNameInZip, BindingParser<?> parser) throws BuildFailureException {
 		List<ItemToArchive> tds = new ArrayList<>();
 		if (descriptors != null) {
-			for (File tdTemplate : descriptors) {
-				tds.add(new FileToArchive(dirNameInZip + File.separator + tdTemplate.getName(), tdTemplate));
+            for (File tdTemplate : descriptors) {
+                try (FileInputStream input = new FileInputStream(tdTemplate)) {
+                    parser.parse(input);
+                } catch (ConvertorException | JAXBException e) {
+                    // build failed
+                    throw new BuildFailureException(String.format("'%s' is not valid task descriptor file", tdTemplate.getAbsolutePath()), e);
+                } catch (FileNotFoundException e) {
+                    // build failed
+                    throw new BuildFailureException(String.format("File '%s' was not found", tdTemplate.getAbsolutePath()));
+                } catch (IOException e) {
+                    // build failed
+                    throw new BuildFailureException(String.format("Cannot verify that the file '%s' is valid task descriptor", tdTemplate.getAbsolutePath()));
+                }
+
+                tds.add(new FileToArchive(dirNameInZip + File.separator + tdTemplate.getName(), tdTemplate));
 			}
 		}
 		return tds;
@@ -185,7 +220,7 @@ public abstract class GeneratorImpl implements Generator {
 	 * Creates {@link MetaInf} about generated BPK (contains groupId, bpkId and
 	 * version);
 	 * 
-	 * @param config
+	 * @param config parsed configuration read from pom.xml
 	 * @return generated {@link MetaInf}
 	 */
 	private MetaInf createMetaInf(Configuration config) {
@@ -214,19 +249,19 @@ public abstract class GeneratorImpl implements Generator {
 	 * file. {@link BpkConfiguration} config.xml file should not be present in
 	 * returned set of items.
 	 * 
-	 * @param cfg
+	 * @param config  parsed configuration read from pom.xml
 	 * @return collected set of items
 	 */
-	abstract Collection<ItemToArchive> getItemsForArchivation(Configuration cfg);
+	abstract Collection<ItemToArchive> getItemsForArchivation(Configuration config);
 
 	/**
 	 * Generates {@link BpkRuntime} from given configuration. Type of runtime is
 	 * dependent on type of BPK. See {@link RuntimeType}. Possible return types
 	 * are for example {@link JavaRuntime} or {@link NativeRuntime}
-	 * 
-	 * @param cfg
+	 *
+     * @param config  parsed configuration read from pom.xml
 	 * @return generated runtime
 	 */
-	abstract BpkRuntime createRuntime(Configuration cfg);
+	abstract BpkRuntime createRuntime(Configuration config);
 
 }
