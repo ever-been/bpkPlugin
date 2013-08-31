@@ -1,6 +1,5 @@
 package cz.cuni.mff.d3s.been.bpkplugin;
 
-import org.apache.maven.BuildFailureException;
 import org.apache.maven.plugin.logging.Log;
 
 /**
@@ -16,7 +15,9 @@ class GeneratorDriver {
 		this.log = log;
 	}
 
-	public void generate(String runtimeTypeName, Configuration configuration) throws ConfigurationException, GeneratorException, BuildFailureException {
+	public
+			void
+			generate(String runtimeTypeName, Configuration configuration) throws ConfigurationException, GeneratorException {
 		selectCorrectGenerator(runtimeTypeName).generate(configuration);
 	}
 
@@ -32,7 +33,9 @@ class GeneratorDriver {
 				return new NativeGenerator(log);
 			default:
 				// should not happen but just for sure
-				throw new IllegalArgumentException(String.format("BPK generator for runtime type '%s' is not implemented", runtimeTypeName));
+				throw new IllegalArgumentException(String.format(
+						"BPK generator for runtime type '%s' is not implemented",
+						runtimeTypeName));
 		}
 	}
 
