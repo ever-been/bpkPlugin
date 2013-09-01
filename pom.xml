@@ -152,5 +152,15 @@
 		</repository>
 	</distributionManagement>
 
+	<repositories>
+		<repository>
+			<id>everbeen.cz-snapshots</id>
+			<url>http://everbeen.cz/artifactory/libs-snapshot-local</url>
+		</repository>
 
+		<repository>
+			<id>everbeen.cz-release</id>
+			<url>http://everbeen.cz/artifactory/libs-release-local</url>
+		</repository>
+	</repositories>
 </project>
