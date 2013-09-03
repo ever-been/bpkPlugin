@@ -7,22 +7,30 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import cz.cuni.mff.d3s.been.util.FileToArchive;
-import cz.cuni.mff.d3s.been.util.ItemToArchive;
 import org.apache.maven.plugin.logging.Log;
 
 import cz.cuni.mff.d3s.been.bpk.BpkDependencies;
 import cz.cuni.mff.d3s.been.bpk.BpkRuntime;
 import cz.cuni.mff.d3s.been.bpk.NativeRuntime;
 import cz.cuni.mff.d3s.been.bpk.ObjectFactory;
+import cz.cuni.mff.d3s.been.util.FileToArchive;
+import cz.cuni.mff.d3s.been.util.ItemToArchive;
 
 /**
+ * Implementation of BPK generator for native tasks
  * 
  * @author Tadeas Palusga
  * 
  */
 class NativeGenerator extends GeneratorImpl {
 
+	/**
+	 * Creates new instance of generator for native tasks
+	 * 
+	 * @param log
+	 *          which should be used to inform mvn user about execution progress
+	 *          and errors
+	 */
 	public NativeGenerator(Log log) {
 		super(log);
 	}
@@ -49,7 +57,7 @@ class NativeGenerator extends GeneratorImpl {
 
 	@Override
 	Collection<ItemToArchive> getItemsForArchivation(Configuration config) {
-		List<ItemToArchive> itemsToArchive = new ArrayList<ItemToArchive>();
+		List<ItemToArchive> itemsToArchive = new ArrayList();
 
 		// add task jar
 		itemsToArchive.add(getFileToArchiveFromBinary(config));
@@ -65,9 +73,8 @@ class NativeGenerator extends GeneratorImpl {
 		return new FileToArchive(nameInBpk, config.binary);
 	}
 
-	private Collection<? extends ItemToArchive> getOtherFilesToArchive(
-			Configuration config) {
-		List<ItemToArchive> itemsToArchive = new ArrayList<ItemToArchive>();
+	private Collection<? extends ItemToArchive> getOtherFilesToArchive(Configuration config) {
+		List<ItemToArchive> itemsToArchive = new ArrayList();
 		for (FileItem fileItem : config.filesToArchive) {
 			itemsToArchive.addAll(fileItem.getFilesToArchive());
 		}

@@ -15,12 +15,21 @@ import cz.cuni.mff.d3s.been.util.FileToArchive;
 import cz.cuni.mff.d3s.been.util.ItemToArchive;
 
 /**
+ * Implementation of BPK generator for JVM based tasks
+ * 
  * 
  * @author Tadeas Palusga
  * 
  */
 class JavaGenerator extends GeneratorImpl {
 
+	/**
+	 * constructs new instance of JavaGenerator
+	 * 
+	 * @param log
+	 *          logger which will be used to inform user about execution progress
+	 *          and failures
+	 */
 	public JavaGenerator(Log log) {
 		super(log);
 	}
@@ -57,7 +66,7 @@ class JavaGenerator extends GeneratorImpl {
 
 	@Override
 	Collection<ItemToArchive> getItemsForArchivation(Configuration config) {
-		List<ItemToArchive> itemsToArchive = new ArrayList<ItemToArchive>();
+		List<ItemToArchive> itemsToArchive = new ArrayList();
 
 		// add task jar
 		itemsToArchive.add(getFileToArchiveFromPackageJar(config));
@@ -72,7 +81,7 @@ class JavaGenerator extends GeneratorImpl {
 	}
 
 	private Collection<? extends ItemToArchive> getOtherFilesToArchive(Configuration config) {
-		List<ItemToArchive> itemsToArchive = new ArrayList<ItemToArchive>();
+		List<ItemToArchive> itemsToArchive = new ArrayList();
 		for (FileItem fileItem : config.filesToArchive) {
 			itemsToArchive.addAll(fileItem.getFilesToArchive());
 		}
@@ -91,7 +100,7 @@ class JavaGenerator extends GeneratorImpl {
 	 *         dependencies.
 	 */
 	Collection<FileToArchive> getLibsToArchive(Configuration config) {
-		List<FileToArchive> libs = new ArrayList<FileToArchive>();
+		List<FileToArchive> libs = new ArrayList();
 
 		for (Artifact artifact : config.artifacts) {
 			File artifactFile = artifact.getFile();

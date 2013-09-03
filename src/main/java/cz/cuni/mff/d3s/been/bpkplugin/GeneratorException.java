@@ -13,18 +13,34 @@ class GeneratorException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public GeneratorException() {
-		super();
-	}
-
+	/**
+	 * constructs new {@link GeneratorException}
+	 * 
+	 * @param cause
+	 *          cause of the exception
+	 */
 	public GeneratorException(Throwable cause) {
 		super(cause);
 	}
 
+	/**
+	 * constructs new {@link GeneratorException}
+	 * 
+	 * @param message
+	 *          description of cause
+	 */
 	public GeneratorException(String message) {
 		super(message);
 	}
 
+	/**
+	 * constructs new {@link GeneratorException}
+	 * 
+	 * @param message
+	 *          description of cause
+	 * @param cause
+	 *          cause of the exception
+	 */
 	public GeneratorException(String message, Throwable cause) {
 		super(message, cause);
 	}

@@ -38,6 +38,13 @@ public abstract class GeneratorImpl implements Generator {
 
 	protected final Log log;
 
+	/**
+	 * Creates new instance of generator for native tasks
+	 * 
+	 * @param log
+	 *          which should be used to inform mvn user about execution progress
+	 *          and errors
+	 */
 	public GeneratorImpl(Log log) {
 		this.log = log;
 	}

@@ -14,6 +14,9 @@ import org.apache.maven.plugins.annotations.*;
 import cz.cuni.mff.d3s.been.bpk.BpkIdentifier;
 
 /**
+ * Main entry class of the bpk plugin. Method
+ * {@link cz.cuni.mff.d3s.been.bpkplugin.GeneratorMojo#execute()} is executed by
+ * Maven plugin runner.
  * 
  * @author Tadeas Palusga
  * 
@@ -123,6 +126,14 @@ public class GeneratorMojo extends AbstractMojo {
 	//----------------------------------------------------------------
 	//----------------------------------------------------------------
 
+	/**
+	 * Main entry method of the MOJO Maven plugin. This method is executed by
+	 * maven plugin runner and starts generation of the result BPK. see
+	 * {@link org.apache.maven.plugin.AbstractMojo#execute()}
+	 * 
+	 * @throws MojoExecutionException
+	 * @throws MojoFailureException
+	 */
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		getLog().info("[[ CREATING BEEN PACKAGE STARTED ]]");
@@ -130,9 +141,9 @@ public class GeneratorMojo extends AbstractMojo {
 		try {
 			generateBPK(getLog());
 		} catch (ConfigurationException e) {
-			throw new MojoFailureException(String.format("Invalid configuration: ", e.getMessage()), e);
+			throw new MojoFailureException(String.format("Invalid configuration: %s", e.getMessage()), e);
 		} catch (GeneratorException e) {
-			throw new MojoFailureException(String.format("Cannot generate BPK: ", e.getMessage()), e);
+			throw new MojoFailureException(String.format("Cannot generate BPK: %s", e.getMessage()), e);
 		}
 
 		getLog().info("[[ CREATING BEEN PACKAGE FINISHED ]]");
@@ -146,10 +157,9 @@ public class GeneratorMojo extends AbstractMojo {
 	/**
 	 * Returns Configuration wrapper object with values configured on this object
 	 * 
-	 * @return
-	 * @throws MojoFailureException
+	 * @return configuration object representing configuration loaded from pom.xml
 	 */
-	Configuration getConfiguration() throws ConfigurationException {
+	Configuration getConfiguration() {
 		Configuration configuration = new Configuration();
 
 		configuration.groupId = groupId;

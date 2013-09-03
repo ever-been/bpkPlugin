@@ -6,11 +6,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import cz.cuni.mff.d3s.been.util.FileToArchive;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import cz.cuni.mff.d3s.been.bpk.BpkNames;
+import cz.cuni.mff.d3s.been.util.FileToArchive;
 
 /**
  * Represents wildcard or file which will be added into generated BPK bundle
@@ -50,22 +50,19 @@ public final class FileItem {
 	 * @return files which will be added to archive
 	 */
 	public List<FileToArchive> getFilesToArchive() {
-		checkParameters();
-
 		String folderName = BpkNames.FILES_DIR;
 		List<File> files = collectFilesForAdding();
 
-		List<FileToArchive> filesToArchive = new ArrayList<FileToArchive>();
+		List<FileToArchive> filesToArchive = new ArrayList();
 		for (File f : files) {
 			String nameInBpk = String.format("%s%s%s", folderName, File.separator, f.getName());
-			//	log.info("    WILL BE ADDED: '" + f.getAbsolutePath() + "' -> '" + nameInBpk + "'");
 			filesToArchive.add(new FileToArchive(nameInBpk, f));
 		}
 		return filesToArchive;
 	}
 
 	private List<File> collectFilesForAdding() {
-		List<File> files = new ArrayList<File>();
+		List<File> files = new ArrayList();
 		if (file != null) {
 			files.add(file);
 		} else {
@@ -73,31 +70,6 @@ public final class FileItem {
 			files.addAll(Arrays.asList(wildcardWorkingDirectory.listFiles(filter)));
 		}
 		return files;
-	}
-
-	/**
-	 * Check parameters of item. Log error into maven log, if some parameter is
-	 * incorrect. (When ERROR is logge into maven log, build failed)
-	 */
-	private void checkParameters() {
-		/*
-		 * it is possibble to define file or wildcard, not both
-		 */
-		if (file == null && wildcard == null) {
-			//		log.error("You must specify file or wildcard.");
-		} else if (file != null && wildcard != null) {
-			//	log.error("You should specify file or wildcard, you can't specify both.");
-		} else if (wildcard != null && wildcardWorkingDirectory == null) {
-			//log.error("Parameter wildcardWorkingDirectory must be specified when wildcard is specified.");
-		}
-		/*
-		 * Files must exists
-		 */
-		else if (file != null && !file.exists()) {
-			//log.error("Specified file '" + file.getAbsolutePath() + "' not found.");
-		} else if (wildcardWorkingDirectory != null && !wildcardWorkingDirectory.exists()) {
-			//log.error("Specified wildcardworking directory '" + wildcardWorkingDirectory.getAbsolutePath() + "' not found.");
-		}
 	}
 
 }
