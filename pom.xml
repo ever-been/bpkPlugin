@@ -141,6 +141,16 @@
 					</execution>
 				</executions>
 			</plugin>
+
+
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${maven-javadoc-plugin.version}</version>
+				<configuration>					
+					<show>package</show>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
