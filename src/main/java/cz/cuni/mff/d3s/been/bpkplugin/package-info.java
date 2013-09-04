@@ -3,3 +3,4 @@
  * automatic generation of BPK packages used by EverBEEN framework. It contains
  * implementation of JVM based BPK generator and native based BPK generator.
  */
+package cz.cuni.mff.d3s.been.bpkplugin;
