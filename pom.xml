@@ -177,16 +177,21 @@
 	</build>
 
 	<distributionManagement>
-		<repository>
-			<id>everbeen.cz-snapshots</id>
+		<snapshotRepository>
+			<id>everbeen.cz-snapshot</id>
 			<name>EverBEEN snapshot artifactory</name>
 			<url>http://everbeen.cz/artifactory/plugins-snapshot-local</url>
+		</snapshotRepository>
+		<repository>
+			<id>everbeen.cz-release</id>
+			<name>EverBEEN release artifactory</name>
+			<url>http://everbeen.cz/artifactory/plugins-release-local</url>
 		</repository>
 	</distributionManagement>
 
 	<repositories>
 		<repository>
-			<id>everbeen.cz-snapshots</id>
+			<id>everbeen.cz-snapshot</id>
 			<url>http://everbeen.cz/artifactory/libs-snapshot-local</url>
 		</repository>
 
