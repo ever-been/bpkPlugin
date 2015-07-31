@@ -3,12 +3,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>cz.cuni.mff.d3s.been</groupId>
 	<artifactId>bpk-maven-plugin</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.0-DPROC</version>
 	<packaging>maven-plugin</packaging>
 	<name>EverBEEN BPK Maven Plugin</name>
 
 	<properties>
-		<been.version>3.1.0</been.version>
+		<been.version>3.1.0-DPROC</been.version>
 		<!-- libraries -->
 		<commons-io.version>2.4</commons-io.version>
 		<commons-lang3.version>3.1</commons-lang3.version>
